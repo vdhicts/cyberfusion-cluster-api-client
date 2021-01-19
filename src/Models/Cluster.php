@@ -11,4 +11,15 @@ class Cluster implements Model
     public int $id;
     public string $createdAt;
     public string $updatedAt;
+
+    public function toArray(): array
+    {
+        return [
+            'name' => $this->name,
+            'group' => $this->group,
+            'id' => $this->id,
+            'created_at' => $this->createdAt,
+            'updated_at' => $this->updatedAt,
+        ];
+    }
 }

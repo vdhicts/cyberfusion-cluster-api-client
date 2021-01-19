@@ -8,12 +8,18 @@ abstract class Endpoint
 {
     protected Client $client;
 
-    /**
-     * Endpoint constructor.
-     * @param Client $client
-     */
     public function __construct(Client $client)
     {
         $this->client = $client;
+    }
+
+    protected function filterEmptyValues(array $array): array
+    {
+        return array_filter(
+            $array,
+            function ($value) {
+                return ! is_null($value);
+            }
+        );
     }
 }

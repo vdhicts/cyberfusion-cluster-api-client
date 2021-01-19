@@ -13,6 +13,7 @@ class Request
     private string $method;
     private string $url;
     private array $body;
+    private bool $requiresAuthentication = true;
 
     /**
      * Request constructor.
@@ -20,7 +21,7 @@ class Request
      * @param string $url
      * @param array $body
      */
-    public function __construct(string $method, string $url, array $body = [])
+    public function __construct(string $method = self::METHOD_GET, string $url = '', array $body = [])
     {
         $this->method = $method;
         $this->url = $url;
@@ -32,13 +33,65 @@ class Request
         return $this->method;
     }
 
+    /**
+     * @param string $method
+     * @return Request
+     */
+    public function setMethod(string $method): Request
+    {
+        $this->method = $method;
+
+        return $this;
+    }
+
     public function getUrl(): string
     {
         return $this->url;
     }
 
+    /**
+     * @param string $url
+     * @return Request
+     */
+    public function setUrl(string $url): Request
+    {
+        $this->url = $url;
+
+        return $this;
+    }
+
     public function getBody(): array
     {
         return $this->body;
+    }
+
+    /**
+     * @param array $body
+     * @return Request
+     */
+    public function setBody(array $body): Request
+    {
+        $this->body = $body;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function authenticationRequired(): bool
+    {
+        return $this->requiresAuthentication;
+    }
+
+    /**
+     * @param bool $requiresAuthentication
+     * @return Request
+     */
+    public function setAuthenticationRequired(bool $requiresAuthentication): Request
+    {
+        $this->requiresAuthentication = $requiresAuthentication;
+
+        return $this;
     }
 }

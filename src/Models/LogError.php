@@ -12,4 +12,16 @@ class LogError implements Model
     public string $uri;
     public string $timestamp;
     public string $errorMessage;
+
+    public function toArray(): array
+    {
+        return [
+            'remote_address' => $this->remoteAddress,
+            'raw_message' => $this->rawMessage,
+            'method' => $this->method,
+            'uri' => $this->uri,
+            'timestamp' => $this->timestamp,
+            'error_message' => $this->errorMessage,
+        ];
+    }
 }

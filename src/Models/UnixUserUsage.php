@@ -8,4 +8,12 @@ class UnixUserUsage implements Model
 {
     public string $path;
     public int $size;
+
+    public function toArray(): array
+    {
+        return [
+            'path' => $this->path,
+            'size' => $this->size,
+        ];
+    }
 }

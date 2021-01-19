@@ -12,4 +12,16 @@ class Cms implements Model
     public int $clusterId;
     public string $createdAt;
     public string $updatedAt;
+
+    public function toArray(): array
+    {
+        return [
+            'name' => $this->name,
+            'virtual_host_id' => $this->virtualHostId,
+            'id' => $this->id,
+            'cluster_id' => $this->clusterId,
+            'created_at' => $this->createdAt,
+            'updated_at' => $this->updatedAt,
+        ];
+    }
 }

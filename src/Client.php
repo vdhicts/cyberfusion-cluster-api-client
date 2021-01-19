@@ -20,35 +20,28 @@ class Client
         $this->configuration = $configuration;
     }
 
-    public function authorize(Models\Login $login): Response
-    {
-        $request = new Request();
-    }
-
     public function request(Request $request): Response
     {
-        if ($request->requiresAuthorisation() && ! $this->hasAccessToken()) {
+        if ($request->authenticationRequired() && ! $this->configuration->hasAccessToken()) {
             throw RequestException::authenticationRequired();
         }
 
-        $requestOptions = array_merge(
-            $request->getData(),
-            [
-                'base_uri' => $this->configuration->getUrl(),
-                'timeout' => 180,
-                'connect_timeout' => 60
-            ]
-        );
-        if ($request->requiresAuthorisation()) {
+        $requestOptions = [
+            'base_uri' => $this->configuration->getUrl(),
+            'timeout' => 180,
+            'connect_timeout' => 60,
+            'form_params' => $request->getBody(),
+        ];
+        if ($request->authenticationRequired()) {
             $requestOptions['headers'] = [
-                'Authorization' => sprintf('Bearer %s', $this->accessToken),
+                'Authorization' => sprintf('Bearer %s', $this->configuration->getAccessToken()),
             ];
         }
 
         try {
             $response = $this
                 ->httpClient
-                ->request($request->getMethod(), $request->getEndpoint(), $requestOptions);
+                ->request($request->getMethod(), $request->getUrl(), $requestOptions);
         } catch (Exception $exception) {
             throw RequestException::requestFailed($exception->getMessage());
         }

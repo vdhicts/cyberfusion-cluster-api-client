@@ -9,4 +9,13 @@ class ValidationError implements Model
     public array $loc;
     public string $msg;
     public string $type;
+
+    public function toArray(): array
+    {
+        return [
+            'loc' => $this->loc,
+            'msg' => $this->msg,
+            'type' => $this->type,
+        ];
+    }
 }
