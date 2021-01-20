@@ -45,7 +45,22 @@ $result = $api->virtualHosts()->list();
 
 ### Requests
 
-The endpoint methods may ask for filters, models or id's. The method typehints will tell you which input is requested. 
+The endpoint methods may ask for filters, models or id's. The method typehints will tell you which input is requested.
+
+#### Models
+
+The endpoint may request a model, most create and update requests do. 
+
+```php
+$unixUser = new UnixUser();
+$unixUser->username = 'foo';
+$unixUser->password = 'bar';
+$unixUser->defaultPhpVersion = '7.4';
+$unixUser->clusterId = 1;
+
+$result = $api->unixUsers->create($unixUser);
+```
+
 When models need to be provided, the required properties will be checked before executing the request. A 
 `RequestException` will be thrown when properties are missing. See the message for more details.
 
@@ -118,6 +133,35 @@ there just for reference.
 When something goes wrong, the client will throw an exception which extends the `ClusterApiException`. If you want to 
 catch exceptions from this package, that's the one you should catch. All exceptions have a code, these codes can be 
 found in the `ClusterApiException` class.
+
+### Laravel
+
+This package can be easily used in any Laravel application. I would suggest adding your username and password to your 
+`.env` file:
+
+```
+CLUSTER_USERNAME=username
+CLUSTER_PASSWORD=password
+```
+
+Next create a config file `cluster.php` in `/config`:
+
+```php
+<?php
+
+return [
+    'username' => env('CLUSTER_USERNAME'),
+    'password' => env('CLUSTER_PASSWORD'),
+];
+```
+
+And use those files to build the configuration:
+
+```php
+$configuration = Configuration::withCredentials(config('cluster.username'), config('cluster.password'));
+```
+
+In the future I might make a Laravel specific package which uses this package.
 
 ## Contribution
 
