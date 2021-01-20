@@ -51,7 +51,7 @@ class Response
      */
     public function getData(string $attribute = null)
     {
-        if (! is_null($attribute)) {
+        if (is_null($attribute)) {
             return $this->data;
         }
 
