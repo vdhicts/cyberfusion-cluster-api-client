@@ -3,6 +3,7 @@
 namespace Vdhicts\Cyberfusion\ClusterApi\Endpoints;
 
 use Vdhicts\Cyberfusion\ClusterApi\Exceptions\RequestException;
+use Vdhicts\Cyberfusion\ClusterApi\Models\Health as HealthModel;
 use Vdhicts\Cyberfusion\ClusterApi\Request;
 use Vdhicts\Cyberfusion\ClusterApi\Response;
 
@@ -18,8 +19,15 @@ class Health extends Endpoint
             ->setMethod(Request::METHOD_POST)
             ->setUrl('health');
 
-        return $this
+        $response = $this
             ->client
             ->request($request);
+        if (! $response->isSuccess()) {
+            return $response;
+        }
+
+        return $response->setData([
+            'health' => (new HealthModel())->fromArray($response->getData()),
+        ]);
     }
 }

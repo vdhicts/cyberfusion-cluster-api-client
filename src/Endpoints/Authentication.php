@@ -3,18 +3,20 @@
 namespace Vdhicts\Cyberfusion\ClusterApi\Endpoints;
 
 use Vdhicts\Cyberfusion\ClusterApi\Exceptions\RequestException;
-use Vdhicts\Cyberfusion\ClusterApi\Models;
+use Vdhicts\Cyberfusion\ClusterApi\Models\Login;
+use Vdhicts\Cyberfusion\ClusterApi\Models\Token;
+use Vdhicts\Cyberfusion\ClusterApi\Models\UserInfo;
 use Vdhicts\Cyberfusion\ClusterApi\Request;
 use Vdhicts\Cyberfusion\ClusterApi\Response;
 
 class Authentication extends Endpoint
 {
     /**
-     * @param Models\Login $login
+     * @param Login $login
      * @return Response
      * @throws RequestException
      */
-    public function login(Models\Login $login): Response
+    public function login(Login $login): Response
     {
         $request = (new Request())
             ->setMethod(Request::METHOD_POST)
@@ -22,9 +24,16 @@ class Authentication extends Endpoint
             ->setBody($this->filterFields($login->toArray()))
             ->setAuthenticationRequired(false);
 
-        return $this
+        $response = $this
             ->client
             ->request($request);
+        if (! $response->isSuccess()) {
+            return $response;
+        }
+
+        return $response->setData([
+            'token' => (new Token())->fromArray($response->getData()),
+        ]);
     }
 
     /**
@@ -37,8 +46,15 @@ class Authentication extends Endpoint
             ->setMethod(Request::METHOD_POST)
             ->setUrl('login/test-token');
 
-        return $this
+        $response = $this
             ->client
             ->request($request);
+        if (! $response->isSuccess()) {
+            return $response;
+        }
+
+        return $response->setData([
+            'userInfo' => (new UserInfo())->fromArray($response->getData()),
+        ]);
     }
 }

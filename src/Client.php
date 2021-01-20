@@ -59,7 +59,6 @@ class Client implements ClientContract
 
     /**
      * @return bool
-     * @throws Exceptions\ResponseException
      * @throws RequestException
      */
     private function validateAccessToken(): bool
@@ -78,7 +77,6 @@ class Client implements ClientContract
 
     /**
      * @return bool
-     * @throws Exceptions\ResponseException
      * @throws RequestException
      */
     private function retrieveAndStoreAccessToken(): bool
@@ -136,7 +134,7 @@ class Client implements ClientContract
         }
 
         $body = $response->getStatusCode() < 300
-            ? json_decode($response->getBody())
+            ? json_decode($response->getBody(), true)
             : [];
         return new Response($response->getStatusCode(), $response->getReasonPhrase(), $body);
     }

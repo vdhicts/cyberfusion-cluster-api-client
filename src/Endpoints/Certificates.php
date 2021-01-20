@@ -3,7 +3,7 @@
 namespace Vdhicts\Cyberfusion\ClusterApi\Endpoints;
 
 use Vdhicts\Cyberfusion\ClusterApi\Exceptions\RequestException;
-use Vdhicts\Cyberfusion\ClusterApi\Models;
+use Vdhicts\Cyberfusion\ClusterApi\Models\Certificate;
 use Vdhicts\Cyberfusion\ClusterApi\Request;
 use Vdhicts\Cyberfusion\ClusterApi\Response;
 use Vdhicts\Cyberfusion\ClusterApi\Support\ListFilter;
@@ -25,9 +25,21 @@ class Certificates extends Endpoint
             ->setMethod(Request::METHOD_GET)
             ->setUrl(sprintf('certificates/?%s', http_build_query($filter->toArray())));
 
-        return $this
+        $response = $this
             ->client
             ->request($request);
+        if (! $response->isSuccess()) {
+            return $response;
+        }
+
+        return $response->setData([
+            'certificates' => array_map(
+                function (array $data) {
+                    return (new Certificate())->fromArray($data);
+                },
+                $response->getData()
+            ),
+        ]);
     }
 
     /**
@@ -41,17 +53,24 @@ class Certificates extends Endpoint
             ->setMethod(Request::METHOD_GET)
             ->setUrl(sprintf('certificates/%d', $id));
 
-        return $this
+        $response = $this
             ->client
             ->request($request);
+        if (! $response->isSuccess()) {
+            return $response;
+        }
+
+        return $response->setData([
+            'certificate' => (new Certificate())->fromArray($response->getData()),
+        ]);
     }
 
     /**
-     * @param Models\Certificate $certificate
+     * @param Certificate $certificate
      * @return Response
      * @throws RequestException
      */
-    public function create(Models\Certificate $certificate): Response
+    public function create(Certificate $certificate): Response
     {
         $requiredAttributes = is_null($certificate->certificate)
             ? ['commonNames', 'clusterId'] // Request Let's Encrypt certificate
@@ -69,17 +88,24 @@ class Certificates extends Endpoint
                 'cluster_id',
             ]));
 
-        return $this
+        $response = $this
             ->client
             ->request($request);
+        if (! $response->isSuccess()) {
+            return $response;
+        }
+
+        return $response->setData([
+            'certificate' => (new Certificate())->fromArray($response->getData()),
+        ]);
     }
 
     /**
-     * @param Models\Certificate $certificate
+     * @param Certificate $certificate
      * @return Response
      * @throws RequestException
      */
-    public function update(Models\Certificate $certificate): Response
+    public function update(Certificate $certificate): Response
     {
         $requiredAttributes = [
             'id',
@@ -97,9 +123,16 @@ class Certificates extends Endpoint
                 'private_key',
             ]));
 
-        return $this
+        $response = $this
             ->client
             ->request($request);
+        if (! $response->isSuccess()) {
+            return $response;
+        }
+
+        return $response->setData([
+            'certificate' => (new Certificate())->fromArray($response->getData()),
+        ]);
     }
 
     /**

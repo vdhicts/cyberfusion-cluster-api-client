@@ -2,8 +2,6 @@
 
 namespace Vdhicts\Cyberfusion\ClusterApi;
 
-use Vdhicts\Cyberfusion\ClusterApi\Exceptions\ResponseException;
-
 class Response
 {
     private int $statusCode;
@@ -23,17 +21,11 @@ class Response
         $this->data = $data;
     }
 
-    /**
-     * @return int
-     */
     public function getStatusCode(): int
     {
         return $this->statusCode;
     }
 
-    /**
-     * @return string
-     */
     public function getStatusMessage(): string
     {
         return $this->statusMessage;
@@ -47,7 +39,6 @@ class Response
     /**
      * @param string|null $attribute
      * @return mixed
-     * @throws ResponseException
      */
     public function getData(string $attribute = null)
     {
@@ -56,9 +47,16 @@ class Response
         }
 
         if (! array_key_exists($attribute, $this->data)) {
-            throw ResponseException::attributeNotInResponse($attribute, array_keys($this->data));
+            return null;
         }
 
         return $this->data[$attribute];
+    }
+
+    public function setData(array $data): Response
+    {
+        $this->data = $data;
+
+        return $this;
     }
 }

@@ -3,7 +3,8 @@
 namespace Vdhicts\Cyberfusion\ClusterApi\Endpoints;
 
 use Vdhicts\Cyberfusion\ClusterApi\Exceptions\RequestException;
-use Vdhicts\Cyberfusion\ClusterApi\Models;
+use Vdhicts\Cyberfusion\ClusterApi\Models\UnixUser;
+use Vdhicts\Cyberfusion\ClusterApi\Models\UnixUserUsage;
 use Vdhicts\Cyberfusion\ClusterApi\Request;
 use Vdhicts\Cyberfusion\ClusterApi\Response;
 use Vdhicts\Cyberfusion\ClusterApi\Support\ListFilter;
@@ -25,9 +26,21 @@ class UnixUsers extends Endpoint
             ->setMethod(Request::METHOD_GET)
             ->setUrl(sprintf('unix-users/?%s', http_build_query($filter->toArray())));
 
-        return $this
+        $response = $this
             ->client
             ->request($request);
+        if (! $response->isSuccess()) {
+            return $response;
+        }
+
+        return $response->setData([
+            'unixUsers' => array_map(
+                function (array $data) {
+                    return (new UnixUser())->fromArray($data);
+                },
+                $response->getData()
+            ),
+        ]);
     }
 
     /**
@@ -41,9 +54,16 @@ class UnixUsers extends Endpoint
             ->setMethod(Request::METHOD_GET)
             ->setUrl(sprintf('unix-users/%d', $id));
 
-        return $this
+        $response = $this
             ->client
             ->request($request);
+        if (! $response->isSuccess()) {
+            return $response;
+        }
+
+        return $response->setData([
+            'unixUser' => (new UnixUser())->fromArray($response->getData()),
+        ]);
     }
 
     /**
@@ -57,17 +77,24 @@ class UnixUsers extends Endpoint
             ->setMethod(Request::METHOD_GET)
             ->setUrl(sprintf('unix-users/usages/%d', $id));
 
-        return $this
+        $response = $this
             ->client
             ->request($request);
+        if (! $response->isSuccess()) {
+            return $response;
+        }
+
+        return $response->setData([
+            'unixUserUsage' => (new UnixUserUsage())->fromArray($response->getData()),
+        ]);
     }
 
     /**
-     * @param Models\UnixUser $unixUser
+     * @param UnixUser $unixUser
      * @return Response
      * @throws RequestException
      */
-    public function create(Models\UnixUser $unixUser): Response
+    public function create(UnixUser $unixUser): Response
     {
         $requiredAttributes = [
             'username',
@@ -87,17 +114,24 @@ class UnixUsers extends Endpoint
                 'cluster_id',
             ]));
 
-        return $this
+        $response = $this
             ->client
             ->request($request);
+        if (! $response->isSuccess()) {
+            return $response;
+        }
+
+        return $response->setData([
+            'unixUser' => (new UnixUser())->fromArray($response->getData()),
+        ]);
     }
 
     /**
-     * @param Models\UnixUser $unixUser
+     * @param UnixUser $unixUser
      * @return Response
      * @throws RequestException
      */
-    public function update(Models\UnixUser $unixUser): Response
+    public function update(UnixUser $unixUser): Response
     {
         $requiredAttributes = [
             'username',
@@ -121,9 +155,16 @@ class UnixUsers extends Endpoint
                 'unix_id',
             ]));
 
-        return $this
+        $response = $this
             ->client
             ->request($request);
+        if (! $response->isSuccess()) {
+            return $response;
+        }
+
+        return $response->setData([
+            'unixUser' => (new UnixUser())->fromArray($response->getData()),
+        ]);
     }
 
     /**

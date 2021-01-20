@@ -3,7 +3,8 @@
 namespace Vdhicts\Cyberfusion\ClusterApi\Endpoints;
 
 use Vdhicts\Cyberfusion\ClusterApi\Exceptions\RequestException;
-use Vdhicts\Cyberfusion\ClusterApi\Models;
+use Vdhicts\Cyberfusion\ClusterApi\Models\MailAccount;
+use Vdhicts\Cyberfusion\ClusterApi\Models\MailAccountUsage;
 use Vdhicts\Cyberfusion\ClusterApi\Request;
 use Vdhicts\Cyberfusion\ClusterApi\Response;
 use Vdhicts\Cyberfusion\ClusterApi\Support\ListFilter;
@@ -25,9 +26,21 @@ class MailAccounts extends Endpoint
             ->setMethod(Request::METHOD_GET)
             ->setUrl(sprintf('mail-accounts/?%s', http_build_query($filter->toArray())));
 
-        return $this
+        $response = $this
             ->client
             ->request($request);
+        if (! $response->isSuccess()) {
+            return $response;
+        }
+
+        return $response->setData([
+            'mailAccounts' => array_map(
+                function (array $data) {
+                    return (new MailAccount())->fromArray($data);
+                },
+                $response->getData()
+            )
+        ]);
     }
 
     /**
@@ -41,9 +54,16 @@ class MailAccounts extends Endpoint
             ->setMethod(Request::METHOD_GET)
             ->setUrl(sprintf('mail-accounts/%d', $id));
 
-        return $this
+        $response = $this
             ->client
             ->request($request);
+        if (! $response->isSuccess()) {
+            return $response;
+        }
+
+        return $response->setData([
+            'mailAccount' => (new MailAccount())->fromArray($response->getData()),
+        ]);
     }
 
     /**
@@ -57,17 +77,24 @@ class MailAccounts extends Endpoint
             ->setMethod(Request::METHOD_GET)
             ->setUrl(sprintf('mail-accounts/usages/%d', $id));
 
-        return $this
+        $response = $this
             ->client
             ->request($request);
+        if (! $response->isSuccess()) {
+            return $response;
+        }
+
+        return $response->setData([
+            'mailAccountUsage' => (new MailAccountUsage())->fromArray($response->getData()),
+        ]);
     }
 
     /**
-     * @param Models\MailAccount $mailAccount
+     * @param MailAccount $mailAccount
      * @return Response
      * @throws RequestException
      */
-    public function create(Models\MailAccount $mailAccount): Response
+    public function create(MailAccount $mailAccount): Response
     {
         $requiredAttributes = [
             'localPart',
@@ -88,17 +115,24 @@ class MailAccounts extends Endpoint
                 'mail_domain_id',
             ]));
 
-        return $this
+        $response = $this
             ->client
             ->request($request);
+        if (! $response->isSuccess()) {
+            return $response;
+        }
+
+        return $response->setData([
+            'mailAccount' => (new MailAccount())->fromArray($response->getData()),
+        ]);
     }
 
     /**
-     * @param Models\MailAccount $mailAccount
+     * @param MailAccount $mailAccount
      * @return Response
      * @throws RequestException
      */
-    public function update(Models\MailAccount $mailAccount): Response
+    public function update(MailAccount $mailAccount): Response
     {
         $requiredAttributes = [
             'localPart',
@@ -123,9 +157,16 @@ class MailAccounts extends Endpoint
                 'cluster_id',
             ]));
 
-        return $this
+        $response = $this
             ->client
             ->request($request);
+        if (! $response->isSuccess()) {
+            return $response;
+        }
+
+        return $response->setData([
+            'mailAccount' => (new MailAccount())->fromArray($response->getData()),
+        ]);
     }
 
     /**

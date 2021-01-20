@@ -11,18 +11,11 @@ class ListFilter implements Filter
     private array $filter = [];
     private array $sort = [];
 
-    /**
-     * @return int
-     */
     public function getSkip(): int
     {
         return $this->skip;
     }
 
-    /**
-     * @param int $skip
-     * @return ListFilter
-     */
     public function setSkip(int $skip): ListFilter
     {
         $this->skip = $skip;
@@ -30,18 +23,11 @@ class ListFilter implements Filter
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getLimit(): int
     {
         return $this->limit;
     }
 
-    /**
-     * @param int $limit
-     * @return ListFilter
-     */
     public function setLimit(int $limit): ListFilter
     {
         $this->limit = $limit;
@@ -49,18 +35,11 @@ class ListFilter implements Filter
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getFilter(): array
     {
         return $this->filter;
     }
 
-    /**
-     * @param array $filter
-     * @return ListFilter
-     */
     public function setFilter(array $filter): ListFilter
     {
         $this->filter = $filter;
@@ -68,18 +47,11 @@ class ListFilter implements Filter
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getSort(): array
     {
         return $this->sort;
     }
 
-    /**
-     * @param array $sort
-     * @return ListFilter
-     */
     public function setSort(array $sort): ListFilter
     {
         $this->sort = $sort;

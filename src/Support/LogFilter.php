@@ -17,18 +17,11 @@ class LogFilter implements Filter
         $this->timestamp = Carbon::today();
     }
 
-    /**
-     * @return DateTimeInterface
-     */
     public function getTimestamp(): DateTimeInterface
     {
         return $this->timestamp;
     }
 
-    /**
-     * @param DateTimeInterface $timestamp
-     * @return LogFilter
-     */
     public function setTimestamp(DateTimeInterface $timestamp): LogFilter
     {
         $this->timestamp = $timestamp;
@@ -36,18 +29,11 @@ class LogFilter implements Filter
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getLimit(): int
     {
         return $this->limit;
     }
 
-    /**
-     * @param int $limit
-     * @return LogFilter
-     */
     public function setLimit(int $limit): LogFilter
     {
         $this->limit = $limit;
@@ -55,18 +41,11 @@ class LogFilter implements Filter
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isShowRawMessage(): bool
     {
         return $this->showRawMessage;
     }
 
-    /**
-     * @param bool $showRawMessage
-     * @return LogFilter
-     */
     public function setShowRawMessage(bool $showRawMessage): LogFilter
     {
         $this->showRawMessage = $showRawMessage;

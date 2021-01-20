@@ -3,7 +3,7 @@
 namespace Vdhicts\Cyberfusion\ClusterApi\Endpoints;
 
 use Vdhicts\Cyberfusion\ClusterApi\Exceptions\RequestException;
-use Vdhicts\Cyberfusion\ClusterApi\Models;
+use Vdhicts\Cyberfusion\ClusterApi\Models\SshKey;
 use Vdhicts\Cyberfusion\ClusterApi\Request;
 use Vdhicts\Cyberfusion\ClusterApi\Response;
 use Vdhicts\Cyberfusion\ClusterApi\Support\ListFilter;
@@ -25,9 +25,21 @@ class SshKeys extends Endpoint
             ->setMethod(Request::METHOD_GET)
             ->setUrl(sprintf('ssh-keys/?%s', http_build_query($filter->toArray())));
 
-        return $this
+        $response = $this
             ->client
             ->request($request);
+        if (! $response->isSuccess()) {
+            return $response;
+        }
+
+        return $response->setData([
+            'sshKeys' => array_map(
+                function (array $data) {
+                    return (new SshKey())->fromArray($data);
+                },
+                $response->getData()
+            ),
+        ]);
     }
 
     /**
@@ -41,17 +53,24 @@ class SshKeys extends Endpoint
             ->setMethod(Request::METHOD_GET)
             ->setUrl(sprintf('ssh-keys/%d', $id));
 
-        return $this
+        $response = $this
             ->client
             ->request($request);
+        if (! $response->isSuccess()) {
+            return $response;
+        }
+
+        return $response->setData([
+            'sshKey' => (new SshKey())->fromArray($response->getData()),
+        ]);
     }
 
     /**
-     * @param Models\SshKey $sshKey
+     * @param SshKey $sshKey
      * @return Response
      * @throws RequestException
      */
-    public function create(Models\SshKey $sshKey): Response
+    public function create(SshKey $sshKey): Response
     {
         $requiredAttributes = [
             'name',
@@ -69,17 +88,24 @@ class SshKeys extends Endpoint
                 'unix_user_id',
             ]));
 
-        return $this
+        $response = $this
             ->client
             ->request($request);
+        if (! $response->isSuccess()) {
+            return $response;
+        }
+
+        return $response->setData([
+            'sshKey' => (new SshKey())->fromArray($response->getData()),
+        ]);
     }
 
     /**
-     * @param Models\SshKey $sshKey
+     * @param SshKey $sshKey
      * @return Response
      * @throws RequestException
      */
-    public function update(Models\SshKey $sshKey): Response
+    public function update(SshKey $sshKey): Response
     {
         $requiredAttributes = [
             'name',
@@ -101,9 +127,16 @@ class SshKeys extends Endpoint
                 'cluster_id',
             ]));
 
-        return $this
+        $response = $this
             ->client
             ->request($request);
+        if (! $response->isSuccess()) {
+            return $response;
+        }
+
+        return $response->setData([
+            'sshKey' => (new SshKey())->fromArray($response->getData()),
+        ]);
     }
 
     /**

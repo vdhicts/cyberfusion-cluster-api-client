@@ -3,7 +3,7 @@
 namespace Vdhicts\Cyberfusion\ClusterApi\Endpoints;
 
 use Vdhicts\Cyberfusion\ClusterApi\Exceptions\RequestException;
-use Vdhicts\Cyberfusion\ClusterApi\Models;
+use Vdhicts\Cyberfusion\ClusterApi\Models\MailDomain;
 use Vdhicts\Cyberfusion\ClusterApi\Request;
 use Vdhicts\Cyberfusion\ClusterApi\Response;
 use Vdhicts\Cyberfusion\ClusterApi\Support\ListFilter;
@@ -25,9 +25,21 @@ class MailDomains extends Endpoint
             ->setMethod(Request::METHOD_GET)
             ->setUrl(sprintf('mail-domains/?%s', http_build_query($filter->toArray())));
 
-        return $this
+        $response = $this
             ->client
             ->request($request);
+        if (! $response->isSuccess()) {
+            return $response;
+        }
+
+        return $response->setData([
+            'mailDomains' => array_map(
+                function (array $data) {
+                    return (new MailDomain())->fromArray($data);
+                },
+                $response->getData()
+            ),
+        ]);
     }
 
     /**
@@ -41,17 +53,24 @@ class MailDomains extends Endpoint
             ->setMethod(Request::METHOD_GET)
             ->setUrl(sprintf('mail-domains/%d', $id));
 
-        return $this
+        $response = $this
             ->client
             ->request($request);
+        if (! $response->isSuccess()) {
+            return $response;
+        }
+
+        return $response->setData([
+            'mailDomain' => (new MailDomain())->fromArray($response->getData()),
+        ]);
     }
 
     /**
-     * @param Models\MailDomain $mailDomain
+     * @param MailDomain $mailDomain
      * @return Response
      * @throws RequestException
      */
-    public function create(Models\MailDomain $mailDomain): Response
+    public function create(MailDomain $mailDomain): Response
     {
         $requiredAttributes = [
             'domain',
@@ -67,9 +86,16 @@ class MailDomains extends Endpoint
                 'unix_user_id',
             ]));
 
-        return $this
+        $response = $this
             ->client
             ->request($request);
+        if (! $response->isSuccess()) {
+            return $response;
+        }
+
+        return $response->setData([
+            'mailDomain' => (new MailDomain())->fromArray($response->getData()),
+        ]);
     }
 
     /**

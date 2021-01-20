@@ -2,6 +2,7 @@
 
 namespace Vdhicts\Cyberfusion\ClusterApi\Models;
 
+use Illuminate\Support\Arr;
 use Vdhicts\Cyberfusion\ClusterApi\Contracts\Model;
 
 class Cms implements Model
@@ -12,6 +13,18 @@ class Cms implements Model
     public int $clusterId;
     public string $createdAt;
     public string $updatedAt;
+
+    public function fromArray(array $data): Cms
+    {
+        $cms = new self();
+        $cms->name = Arr::get($data, 'name');
+        $cms->virtualHostId = Arr::get($data, 'virtual_host_id');
+        $cms->id = Arr::get($data, 'id');
+        $cms->clusterId = Arr::get($data, 'cluster_id');
+        $cms->createdAt = Arr::get($data, 'created_at');
+        $cms->updatedAt = Arr::get($data, 'updated_at');
+        return $cms;
+    }
 
     public function toArray(): array
     {

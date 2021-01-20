@@ -3,7 +3,7 @@
 namespace Vdhicts\Cyberfusion\ClusterApi\Endpoints;
 
 use Vdhicts\Cyberfusion\ClusterApi\Exceptions\RequestException;
-use Vdhicts\Cyberfusion\ClusterApi\Models;
+use Vdhicts\Cyberfusion\ClusterApi\Models\FpmPool;
 use Vdhicts\Cyberfusion\ClusterApi\Request;
 use Vdhicts\Cyberfusion\ClusterApi\Response;
 use Vdhicts\Cyberfusion\ClusterApi\Support\ListFilter;
@@ -25,9 +25,21 @@ class FpmPools extends Endpoint
             ->setMethod(Request::METHOD_GET)
             ->setUrl(sprintf('fpm-pools/?%s', http_build_query($filter->toArray())));
 
-        return $this
+        $response = $this
             ->client
             ->request($request);
+        if (! $response->isSuccess()) {
+            return $response;
+        }
+
+        return $response->setData([
+            'fpmPools' => array_map(
+                function (array $data) {
+                    return (new FpmPool())->fromArray($data);
+                },
+                $response->getData()
+            ),
+        ]);
     }
 
     /**
@@ -41,17 +53,24 @@ class FpmPools extends Endpoint
             ->setMethod(Request::METHOD_GET)
             ->setUrl(sprintf('fpm-pools/%d', $id));
 
-        return $this
+        $response = $this
             ->client
             ->request($request);
+        if (! $response->isSuccess()) {
+            return $response;
+        }
+
+        return $response->setData([
+            'fpmPool' => (new FpmPool())->fromArray($response->getData()),
+        ]);
     }
 
     /**
-     * @param Models\FpmPool $fpmPool
+     * @param FpmPool $fpmPool
      * @return Response
      * @throws RequestException
      */
-    public function create(Models\FpmPool $fpmPool): Response
+    public function create(FpmPool $fpmPool): Response
     {
         $requiredAttributes = [
             'name',
@@ -74,17 +93,24 @@ class FpmPools extends Endpoint
                 'cpu_limit',
             ]));
 
-        return $this
+        $response = $this
             ->client
             ->request($request);
+        if (! $response->isSuccess()) {
+            return $response;
+        }
+
+        return $response->setData([
+            'fpmPool' => (new FpmPool())->fromArray($response->getData()),
+        ]);
     }
 
     /**
-     * @param Models\FpmPool $fpmPool
+     * @param FpmPool $fpmPool
      * @return Response
      * @throws RequestException
      */
-    public function update(Models\FpmPool $fpmPool): Response
+    public function update(FpmPool $fpmPool): Response
     {
         $requiredAttributes = [
             'id',
@@ -107,9 +133,16 @@ class FpmPools extends Endpoint
                 'cluster_id',
             ]));
 
-        return $this
+        $response = $this
             ->client
             ->request($request);
+        if (! $response->isSuccess()) {
+            return $response;
+        }
+
+        return $response->setData([
+            'fpmPool' => (new FpmPool())->fromArray($response->getData()),
+        ]);
     }
 
     /**

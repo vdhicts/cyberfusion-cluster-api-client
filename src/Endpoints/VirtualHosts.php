@@ -3,7 +3,7 @@
 namespace Vdhicts\Cyberfusion\ClusterApi\Endpoints;
 
 use Vdhicts\Cyberfusion\ClusterApi\Exceptions\RequestException;
-use Vdhicts\Cyberfusion\ClusterApi\Models;
+use Vdhicts\Cyberfusion\ClusterApi\Models\VirtualHost;
 use Vdhicts\Cyberfusion\ClusterApi\Request;
 use Vdhicts\Cyberfusion\ClusterApi\Response;
 use Vdhicts\Cyberfusion\ClusterApi\Support\ListFilter;
@@ -25,9 +25,21 @@ class VirtualHosts extends Endpoint
             ->setMethod(Request::METHOD_GET)
             ->setUrl(sprintf('virtual-hosts/?%s', http_build_query($filter->toArray())));
 
-        return $this
+        $response = $this
             ->client
             ->request($request);
+        if (! $response->isSuccess()) {
+            return $response;
+        }
+
+        return $response->setData([
+            'virtualHosts' => array_map(
+                function (array $data) {
+                    return (new VirtualHost())->fromArray($data);
+                },
+                $response->getData()
+            ),
+        ]);
     }
 
     /**
@@ -41,17 +53,24 @@ class VirtualHosts extends Endpoint
             ->setMethod(Request::METHOD_GET)
             ->setUrl(sprintf('virtual-hosts/%d', $id));
 
-        return $this
+        $response = $this
             ->client
             ->request($request);
+        if (! $response->isSuccess()) {
+            return $response;
+        }
+
+        return $response->setData([
+            'virtualHost' => (new VirtualHost())->fromArray($response->getData()),
+        ]);
     }
 
     /**
-     * @param Models\VirtualHost $virtualHost
+     * @param VirtualHost $virtualHost
      * @return Response
      * @throws RequestException
      */
-    public function create(Models\VirtualHost $virtualHost): Response
+    public function create(VirtualHost $virtualHost): Response
     {
         $requiredAttributes = [
             'domain',
@@ -76,17 +95,24 @@ class VirtualHosts extends Endpoint
                 'deploy_commands',
             ]));
 
-        return $this
+        $response = $this
             ->client
             ->request($request);
+        if (! $response->isSuccess()) {
+            return $response;
+        }
+
+        return $response->setData([
+            'virtualHost' => (new VirtualHost())->fromArray($response->getData()),
+        ]);
     }
 
     /**
-     * @param Models\VirtualHost $virtualHost
+     * @param VirtualHost $virtualHost
      * @return Response
      * @throws RequestException
      */
-    public function update(Models\VirtualHost $virtualHost): Response
+    public function update(VirtualHost $virtualHost): Response
     {
         $requiredAttributes = [
             'domain',
@@ -115,9 +141,16 @@ class VirtualHosts extends Endpoint
                 'cluster_id',
             ]));
 
-        return $this
+        $response = $this
             ->client
             ->request($request);
+        if (! $response->isSuccess()) {
+            return $response;
+        }
+
+        return $response->setData([
+            'virtualHost' => (new VirtualHost())->fromArray($response->getData()),
+        ]);
     }
 
     /**

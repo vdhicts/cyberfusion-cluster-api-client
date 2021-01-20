@@ -11,6 +11,10 @@ abstract class Endpoint
 {
     protected ClientContract $client;
 
+    /**
+     * Endpoint constructor.
+     * @param ClientContract $client
+     */
     public function __construct(ClientContract $client)
     {
         $this->client = $client;
@@ -39,6 +43,11 @@ abstract class Endpoint
         throw RequestException::invalidRequest(get_class($model), $action, $missing);
     }
 
+    /**
+     * @param array $array
+     * @param array $fields
+     * @return array
+     */
     protected function filterFields(array $array, array $fields = []): array
     {
         $filteredArray = array_filter(

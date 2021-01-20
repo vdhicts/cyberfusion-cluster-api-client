@@ -3,7 +3,7 @@
 namespace Vdhicts\Cyberfusion\ClusterApi\Endpoints;
 
 use Vdhicts\Cyberfusion\ClusterApi\Exceptions\RequestException;
-use Vdhicts\Cyberfusion\ClusterApi\Models;
+use Vdhicts\Cyberfusion\ClusterApi\Models\Cron;
 use Vdhicts\Cyberfusion\ClusterApi\Request;
 use Vdhicts\Cyberfusion\ClusterApi\Response;
 use Vdhicts\Cyberfusion\ClusterApi\Support\ListFilter;
@@ -25,9 +25,21 @@ class Crons extends Endpoint
             ->setMethod(Request::METHOD_GET)
             ->setUrl(sprintf('crons/?%s', http_build_query($filter->toArray())));
 
-        return $this
+        $response = $this
             ->client
             ->request($request);
+        if (! $response->isSuccess()) {
+            return $response;
+        }
+
+        return $response->setData([
+            'crons' => array_map(
+                function (array $data) {
+                    return (new Cron())->fromArray($data);
+                },
+                $response->getData()
+            ),
+        ]);
     }
 
     /**
@@ -41,17 +53,24 @@ class Crons extends Endpoint
             ->setMethod(Request::METHOD_GET)
             ->setUrl(sprintf('crons/%d', $id));
 
-        return $this
+        $response = $this
             ->client
             ->request($request);
+        if (! $response->isSuccess()) {
+            return $response;
+        }
+
+        return $response->setData([
+            'cron' => (new Cron())->fromArray($response->getData()),
+        ]);
     }
 
     /**
-     * @param Models\Cron $cron
+     * @param Cron $cron
      * @return Response
      * @throws RequestException
      */
-    public function create(Models\Cron $cron): Response
+    public function create(Cron $cron): Response
     {
         $requiredAttributes = [
             'name',
@@ -74,17 +93,24 @@ class Crons extends Endpoint
                 'error_count',
             ]));
 
-        return $this
+        $response = $this
             ->client
             ->request($request);
+        if (! $response->isSuccess()) {
+            return $response;
+        }
+
+        return $response->setData([
+            'cron' => (new Cron())->fromArray($response->getData()),
+        ]);
     }
 
     /**
-     * @param Models\Cron $cron
+     * @param Cron $cron
      * @return Response
      * @throws RequestException
      */
-    public function update(Models\Cron $cron): Response
+    public function update(Cron $cron): Response
     {
         $requiredAttributes = [
             'name',
@@ -111,9 +137,16 @@ class Crons extends Endpoint
                 'cluster_id',
             ]));
 
-        return $this
+        $response = $this
             ->client
             ->request($request);
+        if (! $response->isSuccess()) {
+            return $response;
+        }
+
+        return $response->setData([
+            'cron' => (new Cron())->fromArray($response->getData()),
+        ]);
     }
 
     /**

@@ -3,7 +3,6 @@
 namespace Vdhicts\Cyberfusion\ClusterApi\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Vdhicts\Cyberfusion\ClusterApi\Exceptions\ResponseException;
 use Vdhicts\Cyberfusion\ClusterApi\Response;
 
 class ResponseTest extends TestCase
@@ -17,14 +16,6 @@ class ResponseTest extends TestCase
         $this->assertSame('Test', $response->getStatusMessage());
         $this->assertArrayHasKey('data', $response->getData());
         $this->assertSame('ok', $response->getData('data'));
-    }
-
-    public function testInvalidDataAccess()
-    {
-        $response = new Response(200, 'Test', ['data' => 'ok']);
-
-        $this->expectException(ResponseException::class);
-
-        $response->getData('foo');
+        $this->assertNull($response->getData('foo'));
     }
 }

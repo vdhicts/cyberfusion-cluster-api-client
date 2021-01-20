@@ -33,10 +33,6 @@ class Request
         return $this->method;
     }
 
-    /**
-     * @param string $method
-     * @return Request
-     */
     public function setMethod(string $method): Request
     {
         $availableMethods = [
@@ -58,10 +54,6 @@ class Request
         return $this->url;
     }
 
-    /**
-     * @param string $url
-     * @return Request
-     */
     public function setUrl(string $url): Request
     {
         $this->url = $url;
@@ -74,10 +66,6 @@ class Request
         return $this->body;
     }
 
-    /**
-     * @param array $body
-     * @return Request
-     */
     public function setBody(array $body): Request
     {
         $this->body = $body;
@@ -85,18 +73,11 @@ class Request
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function authenticationRequired(): bool
     {
         return $this->requiresAuthentication;
     }
 
-    /**
-     * @param bool $requiresAuthentication
-     * @return Request
-     */
     public function setAuthenticationRequired(bool $requiresAuthentication): Request
     {
         $this->requiresAuthentication = $requiresAuthentication;

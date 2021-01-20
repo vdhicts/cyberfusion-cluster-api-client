@@ -41,6 +41,9 @@ $api = new ClusterApi($client);
 
 // Perform the request
 $result = $api->virtualHosts()->list();
+
+// Access the virtual host models
+$virtualHosts = $result->getData('virtualHosts');
 ```
 
 ### Requests
@@ -73,8 +76,7 @@ class. See the class itself for its options.
 
 The endpoint methods throw exceptions when the request fails due to timeouts. When the API replies with HTTP protocol 
 errors the `Response` class is still returned. You can check the success of the request with: `$response->isSuccess()`. 
-The content of the response isn't automatically converted to the models. I might add that in the future or feel free to
-create a PR for it.
+The content of the response is automatically converted to the models.
 
 ### Authentication
 
