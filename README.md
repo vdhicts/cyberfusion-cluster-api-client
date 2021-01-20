@@ -163,10 +163,30 @@ $configuration = Configuration::withCredentials(config('cluster.username'), conf
 
 In the future I might make a Laravel specific package which uses this package.
 
+## Tests
+
+Unit tests are available in the `tests` folder. Run with:
+
+`composer test`
+
+When you want a code coverage report which will be generated in the `build/report` folder. Run with:
+
+`composer test-coverage`
+
 ## Contribution
 
 Any contribution is welcome, but it should meet the PSR-2 standard and please create one pull request per feature/bug. 
 In exchange, you will be credited as contributor on this page.
+
+## Security
+
+If you discover any security related issues in this or other packages of Vdhicts, please email info@vdhicts.nl instead
+of using the issue tracker.
+
+## Support
+
+This package isn't an official package from Cyberfusion, so they probably won't offer support for it. If you encounter a
+problem with this client, please open an issue on GitHub.
 
 ## License
 
