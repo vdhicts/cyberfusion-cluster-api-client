@@ -46,8 +46,8 @@ $result = $api->virtualHosts()->list();
 ### Requests
 
 The endpoint methods may ask for filters, models or id's. The method typehints will tell you which input is requested. 
-When models need to be provided, the required attributes will be checked before executing the request. A 
-`RequestException` will be thrown when attributes are missing. See the message for more details.
+When models need to be provided, the required properties will be checked before executing the request. A 
+`RequestException` will be thrown when properties are missing. See the message for more details.
 
 #### Manually make requests
 
@@ -107,6 +107,11 @@ if ($response->isSuccess()) {
     $configuration->setAccessToken($response->getData('access_token'));
 }
 ```
+
+### Enums
+
+Some models have properties that should contain certain values. These values can be found in the enum classes and are 
+there just for reference.
 
 ### Exceptions
 
