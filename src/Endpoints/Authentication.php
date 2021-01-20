@@ -9,25 +9,29 @@ use Vdhicts\Cyberfusion\ClusterApi\Response;
 
 class Authentication extends Endpoint
 {
+    /**
+     * @param Models\Login $login
+     * @return Response
+     * @throws RequestException
+     */
     public function login(Models\Login $login): Response
     {
         $request = (new Request())
             ->setMethod(Request::METHOD_POST)
             ->setUrl('login/access-token')
-            ->setBody($this->filterEmptyValues($login->toArray()))
+            ->setBody($this->filterFields($login->toArray()))
             ->setAuthenticationRequired(false);
 
-        $response = $this
+        return $this
             ->client
             ->request($request);
-        if (! $response->isSuccess()) {
-            throw RequestException::authenticationFailed();
-        }
-
-        return $response;
     }
 
-    public function verify(Models\Token $token): Response
+    /**
+     * @return Response
+     * @throws RequestException
+     */
+    public function verify(): Response
     {
         $request = (new Request())
             ->setMethod(Request::METHOD_POST)

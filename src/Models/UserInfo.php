@@ -10,7 +10,7 @@ class UserInfo implements Model
     public bool $isActive;
     public bool $isProvisioningUser;
     public bool $isSuperUser;
-    public array $clusters;
+    public array $clusters = [];
 
     public function toArray(): array
     {

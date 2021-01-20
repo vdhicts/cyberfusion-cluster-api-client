@@ -1,10 +1,8 @@
 <?php
 
-
 namespace Vdhicts\Cyberfusion\ClusterApi\Contracts;
 
-
-interface Enum
+interface Filter
 {
-
+    public function toArray(): array;
 }

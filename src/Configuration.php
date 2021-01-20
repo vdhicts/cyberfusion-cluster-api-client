@@ -7,7 +7,7 @@ class Configuration
     private string $url = 'https://cluster-api.cyberfusion.nl/api/v1/';
     private string $username;
     private string $password;
-    private string $accessToken;
+    private ?string $accessToken;
 
     public static function withCredentials(string $username, string $password): Configuration
     {
@@ -55,6 +55,11 @@ class Configuration
         $this->password = $password;
 
         return $this;
+    }
+
+    public function hasCredentials(): bool
+    {
+        return ! empty($this->username) && ! empty($this->password);
     }
 
     public function getAccessToken(): ?string

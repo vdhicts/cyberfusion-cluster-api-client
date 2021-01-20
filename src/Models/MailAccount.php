@@ -8,7 +8,7 @@ class MailAccount implements Model
 {
     public string $localPart;
     public string $password;
-    public array $forwardEmailAddresses;
+    public array $forwardEmailAddresses = [];
     public int $quota;
     public int $mailDomainId;
     public int $id;

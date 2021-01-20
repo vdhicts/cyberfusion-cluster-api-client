@@ -2,9 +2,7 @@
 
 namespace Vdhicts\Cyberfusion\ClusterApi\Enums;
 
-use Vdhicts\Cyberfusion\ClusterApi\Contracts\Enum;
-
-class LogMethod implements Enum
+class LogMethod
 {
     public const GET = 'GET';
     public const POST = 'POST';

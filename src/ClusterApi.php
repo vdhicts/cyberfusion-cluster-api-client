@@ -2,17 +2,18 @@
 
 namespace Vdhicts\Cyberfusion\ClusterApi;
 
+use Vdhicts\Cyberfusion\ClusterApi\Contracts\Client as ClientContract;
 use Vdhicts\Cyberfusion\ClusterApi\Endpoints;
 
 class ClusterApi
 {
-    private Client $client;
+    private ClientContract $client;
 
     /**
      * ClusterApi constructor.
-     * @param Client $client
+     * @param ClientContract $client
      */
-    public function __construct(Client $client)
+    public function __construct(ClientContract $client)
     {
         $this->client = $client;
     }

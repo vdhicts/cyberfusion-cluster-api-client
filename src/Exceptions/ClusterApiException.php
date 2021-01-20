@@ -8,7 +8,11 @@ class ClusterApiException extends Exception
 {
     protected const AUTHENTICATION_REQUIRED = 100;
     protected const AUTHENTICATION_FAILED = 101;
-    protected const REQUEST_FAILED = 102;
+    protected const AUTHENTICATION_MISSING = 102;
+    protected const AUTHENTICATION_CREDENTIALS_INVALID = 104;
 
-    protected const RESPONSE_MISSING_ATTRIBUTE = 200;
+    protected const REQUEST_FAILED = 200;
+    protected const REQUEST_INVALID = 201;
+
+    protected const RESPONSE_MISSING_ATTRIBUTE = 300;
 }

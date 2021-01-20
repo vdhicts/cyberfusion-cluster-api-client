@@ -44,6 +44,11 @@ class Response
         return $this->statusCode < 300;
     }
 
+    /**
+     * @param string|null $attribute
+     * @return mixed
+     * @throws ResponseException
+     */
     public function getData(string $attribute = null)
     {
         if (! is_null($attribute)) {

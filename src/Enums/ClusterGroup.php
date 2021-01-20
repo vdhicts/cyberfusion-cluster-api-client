@@ -2,9 +2,7 @@
 
 namespace Vdhicts\Cyberfusion\ClusterApi\Enums;
 
-use Vdhicts\Cyberfusion\ClusterApi\Contracts\Enum;
-
-class ClusterGroup implements Enum
+class ClusterGroup
 {
     public const WEB = 'Web';
     public const EMAIL = 'Mail';

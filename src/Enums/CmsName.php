@@ -2,9 +2,7 @@
 
 namespace Vdhicts\Cyberfusion\ClusterApi\Enums;
 
-use Vdhicts\Cyberfusion\ClusterApi\Contracts\Enum;
-
-class CMSName implements Enum
+class CmsName
 {
     public const WORDPRESS = 'wordpress';
 }

@@ -2,9 +2,7 @@
 
 namespace Vdhicts\Cyberfusion\ClusterApi\Enums;
 
-use Vdhicts\Cyberfusion\ClusterApi\Contracts\Enum;
-
-class HealthStatus implements Enum
+class HealthStatus
 {
     public const UP = 'up';
     public const MAINTENANCE = 'maintenance';

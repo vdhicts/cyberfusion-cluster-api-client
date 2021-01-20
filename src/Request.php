@@ -39,7 +39,16 @@ class Request
      */
     public function setMethod(string $method): Request
     {
-        $this->method = $method;
+        $availableMethods = [
+            self::METHOD_GET,
+            self::METHOD_POST,
+            self::METHOD_PATCH,
+            self::METHOD_PUT,
+            self::METHOD_DELETE
+        ];
+        if (in_array($method, $availableMethods)) {
+            $this->method = $method;
+        }
 
         return $this;
     }

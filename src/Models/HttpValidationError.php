@@ -6,7 +6,7 @@ use Vdhicts\Cyberfusion\ClusterApi\Contracts\Model;
 
 class HttpValidationError implements Model
 {
-    public array $detail;
+    public array $detail = [];
 
     public function toArray(): array
     {
