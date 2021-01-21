@@ -13,12 +13,16 @@ class Logs extends Endpoint
 {
     /**
      * @param int $virtualHostId
-     * @param LogFilter $filter
+     * @param LogFilter|null $filter
      * @return Response
      * @throws RequestException
      */
-    public function accessLogs(int $virtualHostId, LogFilter $filter): Response
+    public function accessLogs(int $virtualHostId, LogFilter $filter = null): Response
     {
+        if (is_null($filter)) {
+            $filter = new LogFilter();
+        }
+
         $request = (new Request())
             ->setMethod(Request::METHOD_GET)
             ->setUrl(sprintf('logs/access/%d/?%s', $virtualHostId, http_build_query($filter->toArray())));
@@ -42,12 +46,16 @@ class Logs extends Endpoint
 
     /**
      * @param int $virtualHostId
-     * @param LogFilter $filter
+     * @param LogFilter|null $filter
      * @return Response
      * @throws RequestException
      */
-    public function errorLogs(int $virtualHostId, LogFilter $filter): Response
+    public function errorLogs(int $virtualHostId, LogFilter $filter = null): Response
     {
+        if (is_null($filter)) {
+            $filter = new LogFilter();
+        }
+
         $request = (new Request())
             ->setMethod(Request::METHOD_GET)
             ->setUrl(sprintf('logs/error/%d/?%s', $virtualHostId, http_build_query($filter->toArray())));
