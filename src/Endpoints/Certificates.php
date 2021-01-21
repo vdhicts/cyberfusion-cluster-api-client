@@ -121,7 +121,7 @@ class Certificates extends Endpoint
                 'certificate',
                 'ca_chain',
                 'private_key',
-                'status_message',
+                'status_message', // Can only be changed with the proper right
             ]));
 
         $response = $this
