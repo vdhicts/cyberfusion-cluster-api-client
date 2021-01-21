@@ -16,7 +16,7 @@ class Health extends Endpoint
     public function get(): Response
     {
         $request = (new Request())
-            ->setMethod(Request::METHOD_POST)
+            ->setMethod(Request::METHOD_GET)
             ->setUrl('health');
 
         $response = $this
