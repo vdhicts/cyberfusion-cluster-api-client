@@ -3,37 +3,65 @@
 namespace Vdhicts\Cyberfusion\ClusterApi;
 
 use GuzzleHttp\Client as GuzzleClient;
+use Psr\Http\Message\ResponseInterface;
 use Throwable;
 use Vdhicts\Cyberfusion\ClusterApi\Contracts\Client as ClientContract;
 use Vdhicts\Cyberfusion\ClusterApi\Exceptions\ClientException;
 use Vdhicts\Cyberfusion\ClusterApi\Exceptions\ClusterApiException;
 use Vdhicts\Cyberfusion\ClusterApi\Exceptions\RequestException;
+use Vdhicts\Cyberfusion\ClusterApi\Models\DetailMessage;
+use Vdhicts\Cyberfusion\ClusterApi\Models\HttpValidationError;
 
 class Client implements ClientContract
 {
+    private const CONNECT_TIMEOUT = 60;
+    private const TIMEOUT = 180;
+
     private Configuration $configuration;
     private GuzzleClient $httpClient;
 
     /**
      * Client constructor.
      * @param Configuration $configuration
-     * @param bool $manuallyAuthorize
+     * @param bool $manuallyAuthenticate
      * @throws ClusterApiException
      */
-    public function __construct(Configuration $configuration, bool $manuallyAuthorize = false)
+    public function __construct(Configuration $configuration, bool $manuallyAuthenticate = false)
     {
         $this->configuration = $configuration;
 
-        if (! $manuallyAuthorize) {
-            $this->authorize();
+        // Initialize the HTTP client
+        $this->initHttpClient();
+
+        // Start authentication unless the authentication is done manually
+        if (! $manuallyAuthenticate) {
+            $this->authenticate();
         }
+    }
+
+    /**
+     * Initialize the HTTP client with default configuration which is used for every request.
+     */
+    private function initHttpClient(): void
+    {
+        $baseUri = $this
+            ->configuration
+            ->getUrl();
+
+        $this->httpClient = new GuzzleClient([
+            'base_uri' => $baseUri,
+            'timeout' => self::TIMEOUT,
+            'connect_timeout' => self::CONNECT_TIMEOUT,
+            'http_errors' => false,
+        ]);
     }
 
     /**
      * @throws ClusterApiException
      */
-    private function authorize(): void
+    private function authenticate(): void
     {
+        // An access token or credentials are required
         if (! $this->configuration->hasAccessToken() && ! $this->configuration->hasCredentials()) {
             throw ClientException::authenticationMissing();
         }
@@ -48,16 +76,21 @@ class Client implements ClientContract
 
         // The access token isn't provided or valid, so check if the username/password can be used
         if ($this->configuration->hasCredentials()) {
-            $credentialsValid = $this->retrieveAndStoreAccessToken();
-            if (! $credentialsValid) {
+            $accessToken = $this->retrieveAccessToken();
+            if (is_null($accessToken)) {
                 throw ClientException::invalidCredentials();
             }
+
+            $this->storeAccessToken($accessToken);
         }
 
+        // No or invalid access token is provided and no or invalid credentials are provided
         throw ClientException::authenticationFailed();
     }
 
     /**
+     * Determine if the current access token is valid.
+     *
      * @return bool
      * @throws RequestException
      */
@@ -76,10 +109,12 @@ class Client implements ClientContract
     }
 
     /**
-     * @return bool
+     * Retrieve the access token with the credentials. Returns null when no access token could be retrieved.
+     *
+     * @return string|null
      * @throws RequestException
      */
-    private function retrieveAndStoreAccessToken(): bool
+    private function retrieveAccessToken(): ?string
     {
         $request = (new Request())
             ->setMethod(Request::METHOD_POST)
@@ -92,16 +127,27 @@ class Client implements ClientContract
 
         $response = $this->request($request);
         if (! $response->isSuccess()) {
-            return false;
+            return null;
         }
 
-        $this
-            ->configuration
-            ->setAccessToken($response->getData('access_token'));
-        return true;
+        return $response->getData('access_token');
     }
 
     /**
+     * Store the access token in the configuration.
+     *
+     * @param string $accessToken
+     */
+    private function storeAccessToken(string $accessToken): void
+    {
+        $this
+            ->configuration
+            ->setAccessToken($accessToken);
+    }
+
+    /**
+     * Perform the request.
+     *
      * @param Request $request
      * @return Response
      * @throws RequestException
@@ -112,30 +158,57 @@ class Client implements ClientContract
             throw RequestException::authenticationRequired();
         }
 
+        try {
+            $response = $this
+                ->httpClient
+                ->request($request->getMethod(), $request->getUrl(), $this->getRequestOptions($request));
+        } catch (Throwable $exception) {
+            throw RequestException::requestFailed($exception->getMessage());
+        }
+
+        return new Response($response->getStatusCode(), $response->getReasonPhrase(), $this->parseBody($response));
+    }
+
+    /**
+     * Determine the request options based on the request and configuration.
+     *
+     * @param Request $request
+     * @return array
+     */
+    private function getRequestOptions(Request $request): array
+    {
         $requestOptions = [
-            'base_uri' => $this->configuration->getUrl(),
-            'timeout' => 180,
-            'connect_timeout' => 60,
             'form_params' => $request->getBody(),
-            'http_errors' => false,
         ];
         if ($request->authenticationRequired()) {
             $requestOptions['headers'] = [
                 'Authorization' => sprintf('Bearer %s', $this->configuration->getAccessToken()),
             ];
         }
+        return $requestOptions;
+    }
 
-        try {
-            $response = $this
-                ->httpClient
-                ->request($request->getMethod(), $request->getUrl(), $requestOptions);
-        } catch (Throwable $exception) {
-            throw RequestException::requestFailed($exception->getMessage());
+    /**
+     * Parse the body to error models when applicable.
+     *
+     * @param ResponseInterface $response
+     * @return array
+     */
+    private function parseBody(ResponseInterface $response): array
+    {
+        $body = json_decode($response->getBody(), true);
+        if ($response->getStatusCode() < 300) {
+            return $body;
         }
 
-        $body = $response->getStatusCode() < 300
-            ? json_decode($response->getBody(), true)
-            : [];
-        return new Response($response->getStatusCode(), $response->getReasonPhrase(), $body);
+        if ($response->getStatusCode() === 422) { // Validation error
+            return [
+                'error' => (new HttpValidationError())->fromArray($body)
+            ];
+        }
+
+        return [
+            'error' => (new DetailMessage())->fromArray($body)
+        ];
     }
 }
