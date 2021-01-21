@@ -82,6 +82,7 @@ class Client implements ClientContract
             }
 
             $this->storeAccessToken($accessToken);
+            return;
         }
 
         // No or invalid access token is provided and no or invalid credentials are provided
