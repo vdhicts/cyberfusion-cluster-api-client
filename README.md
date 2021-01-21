@@ -19,8 +19,8 @@ You can install the package via composer:
 
 ## Usage
 
-This package is just an easy client for using the UptimeRobot API. Please refer to the API documentation for more 
-information about the requests.
+This package is just an easy client for using the Cyberfusion Cluster API. Please refer to the 
+[API documentation](https://cluster-api.cyberfusion.nl/) for more information about the requests.
 
 ### Getting started
 
@@ -29,9 +29,8 @@ use Vdhicts\Cyberfusion\ClusterApi\Client;
 use Vdhicts\Cyberfusion\ClusterApi\Configuration;
 use Vdhicts\Cyberfusion\ClusterApi\ClusterApi;
 
-// Create the configuration from your access token or username/password
+// Create the configuration with your username/password
 $configuration = Configuration::withCredentials('username', 'password');
-//$configuration = Configuration::withAccessToken('accessToken');
 
 // Start the client once and authorize
 $client = new Client($configuration);
@@ -61,7 +60,9 @@ $unixUser->password = 'bar';
 $unixUser->defaultPhpVersion = '7.4';
 $unixUser->clusterId = 1;
 
-$result = $api->unixUsers->create($unixUser);
+$result = $api
+    ->unixUsers
+    ->create($unixUser);
 ```
 
 When models need to be provided, the required properties will be checked before executing the request. A 
@@ -80,17 +81,16 @@ The content of the response is automatically converted to the models.
 
 ### Authentication
 
-The API is authenticated with a username and password and returns an access token. This package takes care of the 
-authentication for you. That can be with a username and password or access token:
+The API is authenticated with a username and password and returns an access token. This package takes care of the
+authentication for you. To get your credentials, you need to contact Cyberfusion.
 
 ```php
 $configuration = Configuration::withCredentials('username', 'password');
-$configuration = Configuration::withAccessToken('accessToken');
 ```
 
-When you authenticate with username and password, this package will automatically retrieve the access token. If you 
-want to store the access token, it's stored in the `Configuration` class and accessible with: 
-`$configuration->getAccessToken()`. 
+When you authenticate with username and password, this package will automatically retrieve the access token. The access 
+token is valid for 30 minutes, so there's not really any need to store this. If you want to store the access token 
+anyway, it's stored in the `Configuration` class and accessible with: `$configuration->getAccessToken()`.
 
 #### Manually authenticate
 
@@ -117,7 +117,9 @@ $login->username = 'username';
 $login->password = 'password';
 
 // Perform the request
-$response = $api->authentication()->login($login);
+$response = $api
+    ->authentication()
+    ->login($login);
 
 // Store the access token in the configuration
 if ($response->isSuccess()) {
