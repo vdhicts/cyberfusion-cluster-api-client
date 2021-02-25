@@ -64,4 +64,30 @@ class Clusters extends Endpoint
             'cluster' => (new Cluster())->fromArray($response->getData()),
         ]);
     }
+
+    /**
+     * @param int $id
+     * @return Response
+     * @throws RequestException
+     */
+    public function commit(int $id): Response
+    {
+        $request = (new Request())
+            ->setMethod(Request::METHOD_POST)
+            ->setUrl('clusters/cluster-deployments')
+            ->setBody([
+                'id' => $id,
+            ]);
+
+        $response = $this
+            ->client
+            ->request($request);
+        if (! $response->isSuccess()) {
+            return $response;
+        }
+
+        return $response->setData([
+            'cluster' => (new Cluster())->fromArray($response->getData()),
+        ]);
+    }
 }
