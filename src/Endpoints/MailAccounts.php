@@ -99,7 +99,6 @@ class MailAccounts extends Endpoint
         $requiredAttributes = [
             'localPart',
             'password',
-            'forwardEmailAddresses',
             'mailDomainId',
         ];
         $this->validateRequired($mailAccount, 'create', $requiredAttributes);
@@ -110,7 +109,6 @@ class MailAccounts extends Endpoint
             ->setBody($this->filterFields($mailAccount->toArray(), [
                 'local_part',
                 'password',
-                'forward_email_addresses',
                 'quota',
                 'mail_domain_id',
             ]));
@@ -137,7 +135,6 @@ class MailAccounts extends Endpoint
         $requiredAttributes = [
             'localPart',
             'password',
-            'forwardEmailAddresses',
             'mailDomainId',
             'id',
             'clusterId'
@@ -150,7 +147,6 @@ class MailAccounts extends Endpoint
             ->setBody($this->filterFields($mailAccount->toArray(), [
                 'local_part',
                 'password',
-                'forward_email_addresses',
                 'quota',
                 'mail_domain_id',
                 'id',
