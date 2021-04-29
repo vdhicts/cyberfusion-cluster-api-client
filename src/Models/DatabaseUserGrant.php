@@ -42,7 +42,7 @@ class DatabaseUserGrant extends ClusterModel implements Model
         return $this;
     }
 
-    public function getTableName(): string
+    public function getTableName(): ?string
     {
         return $this->tableName;
     }
