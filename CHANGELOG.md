@@ -15,12 +15,17 @@ detailed information.
 - Add the `BORG_SERVER` cluster group.
 - Add `private_key` property to SSH keys.
 - Add malware toolkit fields to Cluster.
+- Add `unix_user_id` property to Malware.
 
 ### Changed
 
 - Renamed `BORG` cluster group to `BORG_CLIENT` to match the spec.
 - Retention fields of a borg repository are now nullable.
 - Renamed `name` attribute of a CMS to `software_name` to match the spec.
+
+### Removed
+
+- Removed the `virtual_host_id` property from malware.
 
 ## [1.17.1]
 
