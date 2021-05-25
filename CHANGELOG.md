@@ -8,6 +8,8 @@ detailed information.
 
 ## [1.20.0]
 
+### Added
+
 - Add (auto) deployment of affected clusters. See the [README.md](README.md) for more information about the usage of 
   deployments. 
 
