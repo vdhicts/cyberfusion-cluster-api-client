@@ -13,6 +13,10 @@ detailed information.
 - Requesting a Let's Encrypt certificate not longer requires a cluster deployment.
 - Update to [API version 1.48](https://cluster-api.cyberfusion.nl/redoc#section/Changelog/1.48-2021-06-17)
 
+### Fixed
+
+- Change the `Str::match` to `Str::doesMatch` to not conflict with new Laravel helper.
+
 ## [1.22.0]
 
 ### Added
